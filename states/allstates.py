@@ -1,0 +1,26 @@
+from aiogram.dispatcher.filters.state import StatesGroup, State
+
+
+class EshikStates(StatesGroup):
+    material = State()
+    eshik_razmer = State() 
+    eshik_kvadrat_narx = State() 
+    zamok_narx = State()
+    petle_soni = State()
+    petle_narx = State()
+    qosh_bor_yuq = State()
+    qosh_oddiy_duty = State()
+    qosh_soni = State()
+    qugirchoq_par = State()
+    dabor_bor_yoki_yuq = State()
+    dabor_razmer = State()
+    padshelnik_xa_yuq = State()
+    padshelmik_metr = State()
+    nalichnik_8sm_10_16 = State()
+    nalichnik_razmer = State()
+    oyna_bor_yuq = State()
+    oyna_soni = State()
+    ustanovka_bor_yuq = State()
+    ustanovka = State()
+    dastavka = State()
+    dastavka_narx = State()
