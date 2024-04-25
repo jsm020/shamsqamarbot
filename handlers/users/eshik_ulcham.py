@@ -34,103 +34,121 @@ async def answer_material(message: types.Message, state: FSMContext):
 @dp.message_handler(state=EshikStates.eshik_razmer,content_types=types.ContentTypes.TEXT)
 async def answer_eshik_razmer(message: types.Message, state: FSMContext):
     razmer = message.text
-    razmer_list  = razmer.split(" ")
-    razmer_kvadrat = 0
-    tabaqalar = []
-    for x in razmer_list:
-        razmer_num = x.split("x")
-        kvardat_razmer = float(razmer_num[0])*float(razmer_num[1])
-        razmer_kvadrat+=kvardat_razmer
-        if 0.6 < float(razmer_num[0]) < 1:
-                tabaqalar.append("1 tabaqa")
-        elif 1.07 < float(razmer_num[0]) < 1.40:
-                tabaqalar.append("1.5 tabaqa")
-        elif 1.40 < float(razmer_num[0]) < 1.70:
-                tabaqalar.append("2 tabaqa")
+    try:
+        razmer_list  = razmer.split(" ")
+        razmer_kvadrat = 0
+        tabaqalar = []
+        for x in razmer_list:
+            razmer_num = x.split("x")
+            kvardat_razmer = float(razmer_num[0])*float(razmer_num[1])
+            razmer_kvadrat+=kvardat_razmer
+            if 0.6 < float(razmer_num[0]) < 1:
+                    tabaqalar.append("1 tabaqa")
+            elif 1.07 < float(razmer_num[0]) < 1.40:
+                    tabaqalar.append("1.5 tabaqa")
+            elif 1.40 < float(razmer_num[0]) < 1.70:
+                    tabaqalar.append("2 tabaqa")
 
-        else:
-            tabaqalar.append("4 tabaqa")
+            else:
+                tabaqalar.append("4 tabaqa")
 
-    await state.update_data(
-        {"kvardat_razmer": razmer_kvadrat,
-         "Tabaqalar":tabaqalar,
-         "razmer_list":razmer_list
-         }
-    )
+        await state.update_data(
+            {"kvardat_razmer": razmer_kvadrat,
+            "Tabaqalar":tabaqalar,
+            "razmer_list":razmer_list
+            }
+        )
 
-    await message.answer("Eshik kvadrati narxini yozing? :")
+        await message.answer("Eshik kvadrati narxini yozing? :")
 
-    await EshikStates.next()
+        await EshikStates.next()
+    except:
+        await message.answer("* o'rniga x bilan yozing")
 
 
 @dp.message_handler(state=EshikStates.eshik_kvadrat_narx,content_types=types.ContentTypes.TEXT)
 async def answer_kvadrat_narx(message: types.Message, state: FSMContext):
-    eshik_kv_price = float(message.text)
-    data = await state.get_data()
-    eshik_kv = data.get("kvardat_razmer")
-    eshik_kvadrat_price = eshik_kv_price * eshik_kv
+    try:
+        eshik_kv_price = float(message.text)
+        data = await state.get_data()
+        eshik_kv = data.get("kvardat_razmer")
+        eshik_kvadrat_price = eshik_kv_price * eshik_kv
 
-    await state.update_data(
-        {"eshik_kvadrat_narxi": eshik_kvadrat_price}
-    )
-    await message.answer("Zamok narxini yozing:")
+        await state.update_data(
+            {"eshik_kvadrat_narxi": eshik_kvadrat_price}
+        )
+        await message.answer("Zamok narxini yozing:")
 
-    await EshikStates.next()
+        await EshikStates.next()
+    except:
+        await message.answer("eshik kvadrat narxini son bilan ifodalang!!")
+
 
 
 @dp.message_handler(state=EshikStates.zamok_narx,content_types=types.ContentTypes.TEXT)
 async def answer_zamok_narx(message: types.Message, state: FSMContext):
-    zamok_narx = float(message.text)
-    data = await state.get_data()
-    razmer_list = data.get("razmer_list")
-    zamok_summa = zamok_narx * len(razmer_list)
+    try:
+        zamok_narx = float(message.text)
+        data = await state.get_data()
+        razmer_list = data.get("razmer_list")
+        zamok_summa = zamok_narx * len(razmer_list)
 
-    await state.update_data(
-        {"zamok": zamok_summa}
-    )
-    await message.answer("Umumiy petle necha pachka?:")
+        await state.update_data(
+            {"zamok": zamok_summa}
+        )
+        await message.answer("Umumiy petle necha pachka?:")
 
-    await EshikStates.next()
-    # data = await state.get_data()
-    # print(data)
+        await EshikStates.next()
+    except:
+        await message.answer("zamok narxini son bilan ifodalang!")
+
 @dp.message_handler(state=EshikStates.petle_soni,content_types=types.ContentTypes.TEXT)
 async def answer_petle_soni(message: types.Message, state: FSMContext):
-    petle_soni = float(message.text)
+    try:
+        petle_soni = float(message.text)
 
-    await state.update_data(
-        {"petle_soni": petle_soni}
-    )
-    await message.answer("Petle narxini yozing:")
+        await state.update_data(
+            {"petle_soni": petle_soni}
+        )
+        await message.answer("Petle narxini yozing:")
 
-    await EshikStates.next()
+        await EshikStates.next()
+    except:
+        await message.answer("petle nechtaligini son bilan ifodalang!")
 
 @dp.message_handler(state=EshikStates.petle_narx,content_types=types.ContentTypes.TEXT)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    petle_narx = float(message.text)
-    data = await state.get_data()
-    petle_soni = data.get("petle_soni")
-    petle_summa = petle_narx*petle_soni
+    try:
+        petle_narx = float(message.text)
+        data = await state.get_data()
+        petle_soni = data.get("petle_soni")
+        petle_summa = petle_narx*petle_soni
 
-    await state.update_data(
-        {"petle_summa": petle_summa}
-    )
-    await message.answer("XA yoki Yuq: Qosh hisoblansinmi?",reply_markup=xayuqkeyboard)
+        await state.update_data(
+            {"petle_summa": petle_summa}
+        )
+        await message.answer("XA yoki Yuq: Qosh hisoblansinmi?",reply_markup=xayuqkeyboard)
 
-    await EshikStates.next()
+        await EshikStates.next()
+    except:
+        await message.answer("Petle narxini son bilan ifodalang!")
 
 @dp.message_handler(state=EshikStates.qosh_bor_yuq,content_types=types.ContentTypes.TEXT)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    xa_yuq = message.text
-    if xa_yuq.lower() == "xa":
-        await message.answer("Qosh oddiy yoki duty?",reply_markup=qosh)
-        await EshikStates.next()
-    else:
-         await message.answer("Umumiy qo'g'irchoqlar necha par?:",reply_markup=ReplyKeyboardRemove())
+    try:
+        xa_yuq = message.text
+        if xa_yuq.lower() == "xa":
+            await message.answer("Qosh oddiy yoki duty?",reply_markup=qosh)
+            await EshikStates.next()
+        else:
+            await message.answer("Umumiy qo'g'irchoqlar necha par?:",reply_markup=ReplyKeyboardRemove())
 
-         await state.update_data(
-              {"qosh_narxi":0}
-         )
-         await EshikStates.qugirchoq_par.set()
+            await state.update_data(
+                {"qosh_narxi":0}
+            )
+            await EshikStates.qugirchoq_par.set()
+    except:
+        await message.answer("Xa yoki yuq knopkalardan birini tanlang")
 @dp.message_handler(state=EshikStates.qosh_oddiy_duty,content_types=types.ContentTypes.TEXT)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
     qosh = message.text
@@ -142,166 +160,198 @@ async def answer_petle_summa(message: types.Message, state: FSMContext):
 
     await EshikStates.next()
 
-
 @dp.message_handler(state=EshikStates.qosh_soni)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    qosh_soni = message.text
-    qosh_split = qosh_soni.split(' ')
-    data = await state.get_data()
-    maretial = data.get("material")
-    tabaqalar = data.get("Tabaqalar")
-    qosh_oddiy_yoki_duti = data.get("qosh_oddiy_yoki_duty")
-    new_material = Qosh_narxlari[maretial]
-    qosh_narxi_all = 0
-    for x, y in zip(tabaqalar, qosh_split):
-        for key, value in new_material.items():
-            # print(value)
-            if value["tabaqa"] == x and value["qosh_turi"] == qosh_oddiy_yoki_duti:
-                qosh_narxi = value["narxi"] * float(y)
-                # print(qosh_narxi)
-        qosh_narxi_all +=qosh_narxi
+    try:
+        qosh_soni = message.text
+        qosh_split = qosh_soni.split(' ')
+        data = await state.get_data()
+        maretial = data.get("material")
+        tabaqalar = data.get("Tabaqalar")
+        qosh_oddiy_yoki_duti = data.get("qosh_oddiy_yoki_duty")
+        new_material = Qosh_narxlari[maretial]
+        qosh_narxi_all = 0
+        for x, y in zip(tabaqalar, qosh_split):
+            for key, value in new_material.items():
+                # print(value)
+                if value["tabaqa"] == x and value["qosh_turi"] == qosh_oddiy_yoki_duti:
+                    qosh_narxi = value["narxi"] * float(y)
+                    # print(qosh_narxi)
+            qosh_narxi_all +=qosh_narxi
 
 
-    await state.update_data(
-        {"qosh_narxi": qosh_narxi_all}
-    )
-    data = await state.get_data()
+        await state.update_data(
+            {"qosh_narxi": qosh_narxi_all}
+        )
+        data = await state.get_data()
 
-    await message.answer("Umumiy qo'g'irchoqlar necha par?:")
+        await message.answer("Umumiy qo'g'irchoqlar necha par?:")
 
-    await EshikStates.next()
+        await EshikStates.next()
+    except:
+        await message.answer('son yozishni unutdingiz!')
 
 @dp.message_handler(state=EshikStates.qugirchoq_par)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    qugirchoq = float(message.text)
-    kukla_narx = qugirchoq * 40
-    await state.update_data(
-        {"kukla_narx": kukla_narx}
-    )
-    await message.answer("Dabor hisoblansinmi?",reply_markup=xayuqkeyboard)
+    try:
+        qugirchoq = float(message.text)
+        kukla_narx = qugirchoq * 40
+        await state.update_data(
+            {"kukla_narx": kukla_narx}
+        )
+        await message.answer("Dabor hisoblansinmi?",reply_markup=xayuqkeyboard)
 
-    await EshikStates.next()
+        await EshikStates.next()
+    except:
+        await message.answer('Son yozishni unutdingiz!')
 
 @dp.message_handler(state=EshikStates.dabor_bor_yoki_yuq)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    dabor = message.text
-    if dabor.lower() == "xa":
-        await message.answer("Dabor razmerini kiriting(0.40 0.30 0.20)?:",reply_markup=ReplyKeyboardRemove())
-        await EshikStates.next()
-    else:
-        await state.update_data({"dabor_narx": 0})
-        await message.answer("Padshelnik hisoblansinmi? ",reply_markup=xayuqkeyboard)
-        await EshikStates.padshelnik_xa_yuq.set()
+    try:
+        dabor = message.text
+        if dabor.lower() == "xa":
+            await message.answer("Dabor razmerini kiriting(0.40 0.30 0.20)?:",reply_markup=ReplyKeyboardRemove())
+            await EshikStates.next()
+        else:
+            await state.update_data({"dabor_narx": 0})
+            await message.answer("Padshelnik hisoblansinmi? ",reply_markup=xayuqkeyboard)
+            await EshikStates.padshelnik_xa_yuq.set()
+    except:
+        await message.answer("Xa yoki yuq knopkalardan birini tanlang")
 @dp.message_handler(state=EshikStates.dabor_razmer)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    dabor = message.text
-    dabor_narx = 0
-    dabor_split = dabor.split(' ')
-    data = await state.get_data()
-    razmer_list = data.get('razmer_list')
-    maretial = data.get('material')
-    for x,y in zip(razmer_list,dabor_split):
-        razmer_num = x.split("x")
-
-
-        dabor_m2_1 = float(razmer_num[1])*2
-        dabor_m2_2 = dabor_m2_1 + float(razmer_num[0])
-        dabor_m2 = dabor_m2_2*float(y)
-
-        dabor_summa = dabor_m2*Dabor_narxlari[maretial]
-        dabor_narx +=dabor_summa
-    await state.update_data({"dabor_narx": dabor_narx})
-    await message.answer("Padshelnik hisoblansinmi? ",reply_markup=xayuqkeyboard)
-    await EshikStates.next()
+    try:
+        dabor = message.text
+        dabor_narx = 0
+        dabor_split = dabor.split(' ')
+        data = await state.get_data()
+        razmer_list = data.get('razmer_list')
+        maretial = data.get('material')
+        for x,y in zip(razmer_list,dabor_split):
+            razmer_num = x.split("x")
+            dabor_m2_1 = float(razmer_num[1])*2
+            dabor_m2_2 = dabor_m2_1 + float(razmer_num[0])
+            dabor_m2 = dabor_m2_2*float(y)
+            dabor_summa = dabor_m2*Dabor_narxlari[maretial]
+            dabor_narx +=dabor_summa
+        await state.update_data({"dabor_narx": dabor_narx})
+        await message.answer("Padshelnik hisoblansinmi? ",reply_markup=xayuqkeyboard)
+        await EshikStates.next()
+    except:
+        await message.answer("Dabor razmerini kiritishda xatolik")
 
 
 
 @dp.message_handler(state=EshikStates.padshelnik_xa_yuq)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    padshelnik = message.text
-    if padshelnik.lower() == "xa":
-        await message.answer("podshelnik necha metr(umumiy)?",reply_markup=ReplyKeyboardRemove())
-        await EshikStates.next()
-    else:
-        await state.update_data({"patshelnik_narx": 0})
-        data = await state.get_data()
-        maretial = data.get('material')
-        if maretial=="Krashni":
-            await message.answer("8smlik nalichnik yoki 10smllik yoki 16mmlik?",reply_markup=nalichnik)
+    try:
+        padshelnik = message.text
+        if padshelnik.lower() == "xa":
+            await message.answer("podshelnik necha metr(umumiy)?",reply_markup=ReplyKeyboardRemove())
+            await EshikStates.next()
         else:
-            await message.answer("8smlik nalichnik yoki 10smllik?",reply_markup=nalichnik2)
+            await state.update_data({"patshelnik_narx": 0})
+            data = await state.get_data()
+            maretial = data.get('material')
+            if maretial=="Krashni":
+                await message.answer("8smlik nalichnik yoki 10smllik yoki 16mmlik?",reply_markup=nalichnik)
+            else:
+                await message.answer("8smlik nalichnik yoki 10smllik?",reply_markup=nalichnik2)
 
-        await EshikStates.nalichnik_8sm_10_16.set()
+            await EshikStates.nalichnik_8sm_10_16.set()
+    except:
+        await message.answer("Xa yoki yuq knopkalardan birini tanlang")
 
 @dp.message_handler(state=EshikStates.padshelmik_metr)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    patshelnik = float(message.text)
-    data = await state.get_data()
-    maretial = data.get('material')
-    narxi = patshelnik_price[maretial]*patshelnik
-    await state.update_data({"patshelnik_narx": narxi})
-    if maretial=="Krashni":
-            await message.answer("8smlik nalichnik yoki 10smllik yoki 16mmlik?",reply_markup=nalichnik)
-    else:
-        await message.answer("8smlik nalichnik yoki 10smllik?",reply_markup=nalichnik2)
-    await EshikStates.next()
+    try:
+        patshelnik = float(message.text)
+        data = await state.get_data()
+        maretial = data.get('material')
+        narxi = patshelnik_price[maretial]*patshelnik
+        await state.update_data({"patshelnik_narx": narxi})
+        if maretial=="Krashni":
+                await message.answer("8smlik nalichnik yoki 10smllik yoki 16mmlik?",reply_markup=nalichnik)
+        else:
+            await message.answer("8smlik nalichnik yoki 10smllik?",reply_markup=nalichnik2)
+        await EshikStates.next()
+    except:
+        await message.answer('Raqamlarda ifodalang')
 
 @dp.message_handler(state=EshikStates.nalichnik_8sm_10_16)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    nalichnik_8_10 = message.text
-    await state.update_data({"nalichnik_8_10": nalichnik_8_10})
-    await message.answer("nalichnik razmeri necha metr(umumiy)?",reply_markup=ReplyKeyboardRemove())
-    await EshikStates.next()
+    try:
+        nalichnik_8_10 = message.text
+        await state.update_data({"nalichnik_8_10": nalichnik_8_10})
+        await message.answer("nalichnik razmeri necha metr(umumiy)?",reply_markup=ReplyKeyboardRemove())
+        await EshikStates.next()
+    except:
+        await message.answer('Nalichliklardan birini tanlang')
 
 @dp.message_handler(state=EshikStates.nalichnik_razmer)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    nalichnik_8_10 = float(message.text)
-    data = await state.get_data()
-    maretial = data.get('material')
-    nalichnik_8_yoki_10 = data.get("nalichnik_8_10")
-    nalichnik_narxi=Nalichnik_narxlari[maretial][nalichnik_8_yoki_10]
-    nalichni_summa = nalichnik_narxi * nalichnik_8_10
-    await state.update_data({"nalichnik_narx": nalichni_summa})
-    await message.answer("Oyna hisoblansinmi?",reply_markup=xayuqkeyboard)
-    await EshikStates.next()
+    try:
+        nalichnik_8_10 = float(message.text)
+        data = await state.get_data()
+        maretial = data.get('material')
+        nalichnik_8_yoki_10 = data.get("nalichnik_8_10")
+        nalichnik_narxi=Nalichnik_narxlari[maretial][nalichnik_8_yoki_10]
+        nalichni_summa = nalichnik_narxi * nalichnik_8_10
+        await state.update_data({"nalichnik_narx": nalichni_summa})
+        await message.answer("Oyna hisoblansinmi?",reply_markup=xayuqkeyboard)
+        await EshikStates.next()
+    except:
+        await message.answer("Raqamlarda yozing")
     
 @dp.message_handler(state=EshikStates.oyna_bor_yuq)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    oyna_bor_yoki_yuq=message.text
-    if oyna_bor_yoki_yuq.lower() == "xa":
-        await message.answer("Oynani soni(umumiy):",reply_markup=ReplyKeyboardRemove())
-        await EshikStates.next()
-    else:
-        await state.update_data({"oyna_summa": 0})
-        await message.answer("Ustanovka hisoblansinmi?", reply_markup=xayuqkeyboard)
-        await EshikStates.ustanovka_bor_yuq.set()
+    try:
+        oyna_bor_yoki_yuq=message.text
+        if oyna_bor_yoki_yuq.lower() == "xa":
+            await message.answer("Oynani soni(umumiy):",reply_markup=ReplyKeyboardRemove())
+            await EshikStates.next()
+        else:
+            await state.update_data({"oyna_summa": 0})
+            await message.answer("Ustanovka hisoblansinmi?", reply_markup=xayuqkeyboard)
+            await EshikStates.ustanovka_bor_yuq.set()
+    except:
+        await message.answer("Knopkalardan birini tanlang")
 @dp.message_handler(state=EshikStates.oyna_soni)
-async def answer_petle_summa(message: types.Message, state: FSMContext):     
-    oyna_soni = float(message.text)
-    oyna_narxi = 150
-    oyna_summa = oyna_narxi * oyna_soni
-    await state.update_data({"oyna_summa": oyna_summa})
-    await message.answer("Ustanovka hisoblansinmi?", reply_markup=xayuqkeyboard)
-    await EshikStates.next()
+async def answer_petle_summa(message: types.Message, state: FSMContext): 
+    try:    
+        oyna_soni = float(message.text)
+        oyna_narxi = 150
+        oyna_summa = oyna_narxi * oyna_soni
+        await state.update_data({"oyna_summa": oyna_summa})
+        await message.answer("Ustanovka hisoblansinmi?", reply_markup=xayuqkeyboard)
+        await EshikStates.next()
+    except:
+        await message.answer('Raqamlarda yozing')
 
 @dp.message_handler(state=EshikStates.ustanovka_bor_yuq)
 async def answer_petle_summa(message: types.Message, state: FSMContext):
-    ustanovka_bor_yoki_yuq = message.text
-    if ustanovka_bor_yoki_yuq.lower() == "xa":
-        await message.answer("Ustanovka narxini kiriting?(umumiy):",reply_markup=ReplyKeyboardRemove())
-        await EshikStates.next()
-    else:
-        await state.update_data({"ustanovka_narx": 0})
-        await message.answer("Dastavka hisoblansinmi?",reply_markup=xayuqkeyboard)
+    try:
+        ustanovka_bor_yoki_yuq = message.text
+        if ustanovka_bor_yoki_yuq.lower() == "xa":
+            await message.answer("Ustanovka narxini kiriting?(umumiy):",reply_markup=ReplyKeyboardRemove())
+            await EshikStates.next()
+        else:
+            await state.update_data({"ustanovka_narx": 0})
+            await message.answer("Dastavka hisoblansinmi?",reply_markup=xayuqkeyboard)
 
-        await EshikStates.dastavka.set()
+            await EshikStates.dastavka.set()
+    except:
+        await message.answer('Knopkalardan birini tanlang')
 
 @dp.message_handler(state=EshikStates.ustanovka)
 async def handle_ustanovka(message: types.Message, state: FSMContext):
-    ustanovka_narxi = float(message.text)
-    await state.update_data({"ustanovka_narx": ustanovka_narxi})
-    await message.answer("Dastavka hisoblansinmi?", reply_markup=xayuqkeyboard)
-    await EshikStates.dastavka.set()
+    try:
+        ustanovka_narxi = float(message.text)
+        await state.update_data({"ustanovka_narx": ustanovka_narxi})
+        await message.answer("Dastavka hisoblansinmi?", reply_markup=xayuqkeyboard)
+        await EshikStates.dastavka.set()
+    except:
+        await message.answer('Raqamlarda yozing')
 
 @dp.message_handler(state=EshikStates.dastavka)
 async def handle_dastavka(message: types.Message, state: FSMContext):
